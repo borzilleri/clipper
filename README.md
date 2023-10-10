@@ -9,7 +9,6 @@ For further documentation, reference the snibbets docs (at least until I get aro
 
 ## Todo List
 
-* pygments highlighting
 * `gum` menus
 * `fzf` menus
 * `skylighting` highlighting

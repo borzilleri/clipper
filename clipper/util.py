@@ -110,3 +110,17 @@ def strip_empty_lines(val: str):
 
 def warn(s: str):
     print(s, file=sys.stderr)
+
+
+def is_fenced(s: str) -> bool:
+    count = len(re.findall(r"^```", s, flags=re.M))
+    return count > 1 and (count % 2) == 0
+
+def get_fences(text: str):
+    if not is_fenced(text):
+        return []
+    p = re.compile(r"^(?:`{3,})(?P<lang> *\S+)? *\n(?P<code>[\s\S]*?)\n(?:`{3,}) *(?=\n|\Z)", flags=re.M | re.I)
+    fences = []
+    for m in p.finditer(text):
+        fences.append(m.groupdict())
+    return fences

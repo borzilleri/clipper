@@ -83,8 +83,9 @@ def print_snippet(output: str, filepath: str, lang: str = ""):
     if CONFIG.copy:
         util.copy(output if CONFIG.all_notes else snippet.clean_code(output))
         warn("Copied to clipboard")
-    if CONFIG.highlight and CONFIG.output == "raw":
-        print(highlighter.highlight(output, filepath, lang))
+    # Only highlight if we're attached to a tty and using raw output,.
+    if CONFIG.highlight and CONFIG.output == "raw" and sys.stdout.isatty():
+        print(highlighter.highlight(output, filepath, lang, CONFIG.highlight_theme))
     elif CONFIG.all_notes:
         print(output)
     else:

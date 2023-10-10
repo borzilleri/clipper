@@ -1,4 +1,4 @@
-from .util import trim_list, strip_empty_lines
+from .util import trim_list, strip_empty_lines, is_fenced
 from typing import Tuple, List, Dict
 import regex as re
 import uuid
@@ -56,6 +56,19 @@ def extract_code(text: str, blockquotes: bool) -> Tuple[str, dict]:
     return (text, code_blocks)
 
 
+# Does this part have any non-code notes in it?
+def has_notes(text: str):
+    notes = list(
+        filter(
+            lambda el: not re.search(f"^{BLOCK_RE.pattern}$", el)
+            and not re.search(r"^```", el)
+            and len(el.strip()) > 0,
+            text.split("\n"),
+        )
+    )
+    return len(notes) > 0
+
+
 def restore_code(part: str, blocks: Dict[str, str]) -> Dict[str, str]:
     # if this part has any blocks in it
     # OR has any notes in it (because all_notes=True),
@@ -63,18 +76,8 @@ def restore_code(part: str, blocks: Dict[str, str]) -> Dict[str, str]:
     snippet = {"title": "Default snippet", "lang": "", "code": ""}
     # Does this part have any code block tags in it?
     block_tags = BLOCK_RE.findall(part)
-    # Does this part have any non-code notes in it?
-    # Apparently the title line counts for some reason?
-    has_notes = list(
-        filter(
-            lambda el: not re.search(r"^<block\d+>$", el)
-            and not re.search(r"^```", el)
-            and len(el.strip()) > 0,
-            part.split("\n"),
-        )
-    )
 
-    if block_tags or has_notes:
+    if block_tags or has_notes(part):
         # Extract the title from the first line
         # Grab the first line, check to see if it's a block tag
         title_m = re.search(r"\A(.+)\n", part)
@@ -100,11 +103,6 @@ def parse_lang_marker(block: str):
         lang = m.group(1)
         code = strip_empty_lines(re.sub(r"<lang:.*?>\n+", "", block))
     return (lang, code)
-
-
-def is_fenced(s: str) -> bool:
-    count = len(re.findall(r"^```", s, flags=re.M))
-    return count > 1 and (count % 2) == 0
 
 
 def outdent(val: str) -> str:

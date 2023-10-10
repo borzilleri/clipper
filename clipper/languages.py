@@ -1,6 +1,20 @@
-from .langauge_data import LANGUAGES
+from .language_data import LANGUAGES
 from typing import Optional
 
+SYNTAX_NORMALIZATION = {
+  'objectivec': ["objective-c", "obj-c"],
+  'markdown': ["md", "mmd", "mkdn", "multimarkdown"],
+  'bash': ["csh", "sh", "shell"],
+  'javascript': ["js"],
+  'javascriptreact': ["react"],
+  'yaml': ["yml"]
+}
+
+def normalize_syntax(lang: str) -> str:
+    for k, v in SYNTAX_NORMALIZATION.items():
+        if lang in v:
+            return k
+    return lang
 
 def lang_to_ext(lang: str) -> Optional[str]:
     """

@@ -85,8 +85,8 @@ def print_snippet(output: str, filepath: str, lang: str = ""):
         warn("Copied to clipboard")
     # Only highlight if we're attached to a tty and using raw output,.
     if CONFIG.highlight and CONFIG.output == "raw" and sys.stdout.isatty():
-        print(highlighter.highlight(output, filepath, lang, CONFIG.highlight_theme))
-    elif CONFIG.all_notes:
+        output = highlighter.highlight(output, filepath, lang, CONFIG.highlight_theme)
+    if CONFIG.all_notes:
         print(output)
     else:
         print(snippet.clean_code(output))
@@ -96,7 +96,11 @@ def print_all(snippets: list[dict], filepath):
     if CONFIG.output == "json":
         print_snippet(json.dumps(snippets), filepath)
     else:
+        is_first = True
         for s in snippets:
+            if not is_first:
+                print("")
+            is_first = False
             print(f"### {s['title']} ###")
             print("")
             print_snippet(s["code"], filepath, s["lang"])

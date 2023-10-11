@@ -1,8 +1,15 @@
-import argparse
-import sys
 from . import clipper, search
 from .config import CONFIG, OPTIONS, CONFIG_FILE
+import argparse
+import importlib
+import sys
 
+def get_version():
+    try:
+        version = importlib.import_module("clipper._version")
+        return version.version or "0.0.0"
+    except ModuleNotFoundError:
+        return "0.0.0"
 
 def get_cli_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -83,8 +90,7 @@ def get_cli_args() -> argparse.Namespace:
         "-v",
         "--version",
         action="version",
-        # TODO: Read version from somwhere?
-        version="0.1.0",
+        version=get_version(),
         help="Display version information",
     )
 

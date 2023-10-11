@@ -1,6 +1,6 @@
 [project]
 name = "clipper"
-version = "0.1.0"
+dynamic = ["version"]
 dependencies = [
   "pick",
   "Pygments",
@@ -9,12 +9,15 @@ dependencies = [
   "regex"
 ]
 
+[project.scripts]
+clipper = "clipper.cli:main"
+
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=64", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["clipper"]
 
-[project.scripts]
-clipper = "clipper.cli:main"
+[tool.setuptools_scm]
+version_file = "clipper/_version.py"

@@ -36,9 +36,7 @@ def extract_code(text: str, blockquotes: bool) -> Tuple[str, dict]:
         r"^(`{3,})( *\S+)? *\n([\s\S]*?)\n(`{3,}) *(\n|\Z)", text, flags=re.M | re.I
     )
     for m in matches:
-        lang = m.group(2)
-        if lang:
-            lang = f"<lang:{lang.strip()}>\n"
+        lang = f"<lang:{m.group(2).strip()}>\n" if m.group(2) else ""
         block_id = __make_block_id()
         code_blocks[block_id] = f"{lang}{m.group(3)}".strip()
         text = text.replace(m.group(0), f"<{block_id}>")

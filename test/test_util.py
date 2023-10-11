@@ -30,6 +30,12 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(util.strip_empty_lines(" \nabc\n "), "abc")
         self.assertEqual(util.strip_empty_lines("abc\n \ndef"), "abc\n \ndef")
         self.assertEqual(util.strip_empty_lines(" \nabc\n \ndef\n "), "abc\n \ndef")
+    
+    def test_copy_paste(self):
+        text = "abc"
+        util.copy(text)
+        out = util.paste()
+        self.assertEqual(text, out)
 
 if __name__ == "__main__":
     unittest.main()

@@ -61,7 +61,6 @@ def open_file(path: str, app: Optional[str] = None):
         cmd = windows_cmd(path, app)
     else:
         cmd = linux_cmd(path)
-    print(cmd)
     subprocess.Popen(cmd).wait()
 
 

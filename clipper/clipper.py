@@ -115,9 +115,9 @@ def new_snippet_from_clipboard():
     signal.signal(signal.SIGINT, signal_handler)
 
     text = snippet.outdent(util.paste())
-    title = input("What does this snippet do?").strip()
+    title = input("What does this snippet do?\n> ").strip()
     langs = input(
-        "What language(s) does it use (separate with spaces, full names or file extensions)"
+        "What language(s) does it use (separate with spaces, full names or file extensions)?\n> "
     ).strip()
     langs = [l.strip() for l in re.split(r" +", langs)]
 
@@ -129,10 +129,10 @@ def new_snippet_from_clipboard():
         [t for t in set([languages.ext_to_lang(l) for l in langs] + langs) if t]
     )
 
-    filename = f"{title}{' '.join([f'.{x}' for x in exts])}{CONFIG.extension}"
+    filename = f"{title}.{'.'.join([x for x in exts])}.{CONFIG.extension}"
     filepath = Path(CONFIG.source, filename)
     with open(filepath, "w") as f:
-        print(f"tags: {', '.join(tags)}\n```\n{text}\n```", f)
+        print(f"tags: {', '.join(tags)}\n---\n```\n{text}\n```", file=f)
 
     print(f"New snippet written to {filename}")
     if OPTIONS.edit_snippet:

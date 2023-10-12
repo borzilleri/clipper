@@ -9,6 +9,9 @@ For further documentation, reference the snibbets docs (at least until I get aro
 
 ## Todo List
 
+These are features that `snibbets` has that I have not yet implemented, or 
+additional features I'd like to add.
+
 * `gum` menus
 * `fzf` menus
 * `skylighting` highlighting
@@ -19,8 +22,23 @@ For further documentation, reference the snibbets docs (at least until I get aro
 
 * pygments highlighting
 
-Pygments is available as a python module, and as such is bundled with clipper. This doesn't change the behavior, but installing pygments separately is no longer required.
+Pygments is available as a python module, and as such is bundled with clipper. 
+This means there's no need to install it separately, and it's always available as
+the default highlighter.
 
 * console menu
 
 The default ("console") menu is powered by the [pick](https://github.com/wong2/pick) library.
+
+* Minor formatting differences
+
+I have attempted to maintain compatability for the config file, command-line options, 
+and snippet files. However, the code is not _exactly_ the same, and I have made some 
+opinionated choices around format and whitespace.
+
+## Ok, but why did I make this?
+
+Honestly? No good reason. Stretching some codeing muscles, learning more about
+building and publishing python packages.
+
+Also, I just don't care for ruby and didnt feel like installing it.

@@ -129,13 +129,13 @@ def clean_code(block: str):
     # if we're a fenced code block, discard the fences
     # and anything outside
     if is_fenced(block):
-        code_blocks = re.findall(r"(`{3,})(\S+)?\s*\n(.*?)\n\1", block, re.M)
+        code_blocks = re.findall(r"(`{3,})(\S+)?\s*\n(.*?)\n\1", block, re.DOTALL)
         code_blocks = [x[2].strip() for x in code_blocks]
         return "\n\n".join(code_blocks)
     # Otherwise, assume its intended.
     # discard non-intended lines and return the rest
     if re.search(r"^( {4,}|\t+)", block):
-        block = outdent(block)
+        block = outdent(block).strip()
     return block
 
 

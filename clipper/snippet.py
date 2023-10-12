@@ -117,7 +117,7 @@ def outdent(val: str) -> str:
     if indent is None:
         return val
     code = [re.sub(rf"^{indent[1]}", "", l, flags=re.M | re.I) for l in code]
-    return "\n".join(code).strip()
+    return "\n".join(code)
 
 
 def clean_code(block: str):

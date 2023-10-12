@@ -114,7 +114,7 @@ def new_snippet_from_clipboard():
 
     signal.signal(signal.SIGINT, signal_handler)
 
-    text = snippet.outdent(util.paste())
+    text = snippet.outdent(util.paste()).strip()
     title = input("What does this snippet do?\n> ").strip()
     langs = input(
         "What language(s) does it use (separate with spaces, full names or file extensions)?\n> "

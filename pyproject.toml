@@ -1,13 +1,6 @@
 [project]
 name = "clipper"
-dynamic = ["version"]
-dependencies = [
-  "pick",
-  "Pygments",
-  "pyperclip",
-  "PyYAML",
-  "regex"
-]
+dynamic = ["version", "dependencies"]
 
 [project.scripts]
 clipper = "clipper.cli:main"
@@ -18,6 +11,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["clipper"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools_scm]
 version_file = "clipper/_version.py"

@@ -1,5 +1,6 @@
 from . import clipper, search
 from .config import CONFIG, OPTIONS, CONFIG_FILE
+from typing import Optional
 import argparse
 import importlib
 import sys
@@ -11,7 +12,7 @@ def get_version():
     except ModuleNotFoundError:
         return "0.0.0"
 
-def get_cli_args() -> argparse.Namespace:
+def get_cli_args(argv: Optional[list] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
 
     # Actions
@@ -96,13 +97,12 @@ def get_cli_args() -> argparse.Namespace:
 
     # The search query
     parser.add_argument("query", nargs="*")
+    return parser.parse_args(argv)
 
-    return parser.parse_args()
 
-
-def main():
+def main(argv: Optional[list] = None):
     CONFIG.read_config()
-    args = get_cli_args()
+    args = get_cli_args(argv)
     CONFIG.update_from_args(args)
     OPTIONS.parse_args(args)
 

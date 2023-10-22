@@ -1,3 +1,4 @@
+from .colors import c
 from pathlib import Path
 from typing import Optional, List, Dict
 import regex as re
@@ -65,14 +66,14 @@ def search(query: str, source_dir: Path, ext: str, name_only: bool) -> Optional[
     # If we're configured for name_only,
     # don't try grep and just bail here.
     if name_only:
-        print("No name matches found.")
+        print(f"{c('br')}No name matches found.")
         return None
 
     cmd = grep_cmd(query, folder, ext)
     # if we didn't find a grep command, print a message and bail.
     if not cmd:
         print(
-            "No search method available on this system. Please install ripgrep, silver surfer, ack, or grep."
+            f"{c('br')}No search method available on this system. Please install ripgrep, silver surfer, ack, or grep."
         )
         return None
     return do_cmd(cmd)

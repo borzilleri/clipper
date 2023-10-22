@@ -1,5 +1,6 @@
 from . import util, snippet, menus, languages, printer
 from .config import CONFIG, OPTIONS
+from .colors import c
 from .util import warn
 from pathlib import Path
 from typing import Optional, List
@@ -71,9 +72,9 @@ def new_snippet_from_clipboard():
     signal.signal(signal.SIGINT, signal_handler)
 
     text = snippet.outdent(util.paste()).strip()
-    title = input("What does this snippet do?\n> ").strip()
+    title = input(f"{c('by')}What does this snippet do?\n> ").strip()
     langs = input(
-        "What language(s) does it use (separate with spaces, full names or file extensions)?\n> "
+        f"{c('by')}What language(s) does it use (separate with spaces, full names or file extensions)?\n> "
     ).strip()
     langs = [l.strip() for l in re.split(r" +", langs)]
 
@@ -90,6 +91,6 @@ def new_snippet_from_clipboard():
     with open(filepath, "w") as f:
         print(f"tags: {', '.join(tags)}\n---\n```\n{text}\n```", file=f)
 
-    print(f"New snippet written to {filename}")
+    print(f"{c('bg')}New snippet written to {c('bw')}{filename}")
     if OPTIONS.edit_snippet:
         open_file_in_editor(str(filepath), CONFIG.editor)

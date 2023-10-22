@@ -1,5 +1,6 @@
 from . import clipper, search
 from .config import CONFIG, OPTIONS, CONFIG_FILE, Format
+from .colors import c, init_colors
 from typing import Optional
 import argparse
 import importlib
@@ -105,10 +106,12 @@ def main(argv: Optional[list] = None):
     args = get_cli_args(argv)
     CONFIG.update_from_args(args)
     OPTIONS.parse_args(args)
+    init_colors()
 
     if OPTIONS.save_config:
         CONFIG.write_config()
-        print(f"Configuration saved to {CONFIG_FILE}")
+        # green / white
+        print(f"{c('bg')}Configuration saved to {c('w')}{CONFIG_FILE}")
 
     if OPTIONS.edit_config:
         CONFIG.write_config()
@@ -116,8 +119,8 @@ def main(argv: Optional[list] = None):
         sys.exit()
 
     if not CONFIG.source.is_dir():
-        print(f"The Snippets folder doesn't exist, please configure it.")
-        print(f"Run `snibbets --configure` to open the config file for editing")
+        print(f"{c('br')}The Snippets folder doesn't exist, please configure it.")
+        print(f"{c('bg')}Run `{c('bw')}snibbets --configure{c('bg')}` to open the config file for editing")
         sys.exit()
 
     if OPTIONS.paste_snippet:
@@ -128,7 +131,7 @@ def main(argv: Optional[list] = None):
     if query is None or len(query) == 0:
         if OPTIONS.save_config:
             sys.exit()
-        print("No search query.")
+        print(f"{c('br')}No search query.")
         sys.exit(1)
 
     result = search.search(query, CONFIG.source, CONFIG.extension, CONFIG.name_only)

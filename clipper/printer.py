@@ -1,5 +1,6 @@
-from .config import CONFIG, Format
 from . import highlighter, util, snippet
+from .config import CONFIG, Format
+from .colors import c
 from pathlib import Path
 import hashlib
 import json
@@ -44,8 +45,8 @@ def __print_single(clip: dict[str,str], filepath: str):
     if CONFIG.copy:
         util.copy(clip['code'] if CONFIG.all_notes else snippet.clean_code(clip['code']))
         util.warn("Copied to clipboard")
-    header = f"{Path(filepath).stem}: {clip['title']}"
-    util.warn(f"{header}\n{'-'*len(header)}\n")
+    header = f"{c('bw')}{Path(filepath).stem}: {c('c')}{clip['title']}{c('x')}"
+    util.warn(f"{header}\n{c('dw')}{'-'*len(header)}{c('x')}\n")
     output = clip['code']
     if CONFIG.highlight and sys.stdout.isatty():
         # Only highlight if we're attached to a tty
@@ -64,24 +65,24 @@ def __print_multiple(clips: list[dict[str,str]], filepath: str):
     copy_out = ""
     std_out = ""
     prefix = ""
-    for c in clips:
-        title = f"{prefix}### {c['title']} ###\n\n"
+    for clip in clips:
+        title = f"{prefix}{c('dw')}### {c('xbw')}{clip['title']} {c('xdw')}###{c('x')}\n\n"
         std_out += title
         copy_out += title
-        this_code = c['code']
+        this_code = clip['code']
         if not CONFIG.all_notes:
             this_code = snippet.clean_code(this_code)+"\n"
         copy_out += this_code
         if CONFIG.highlight and sys.stdout.isatty():
             # Only highlight if we're attached to a tty
-            this_code = highlighter.highlight(this_code, filepath, c['language'], CONFIG.highlight_theme)
+            this_code = highlighter.highlight(this_code, filepath, clip['language'], CONFIG.highlight_theme)
         std_out += this_code
         prefix = "\n"
     if CONFIG.copy:
         util.copy(copy_out)
         util.warn("Copied to clipboard")
     header = Path(filepath).stem
-    util.warn(f"{header}\n{'-'*len(header)}\n")
+    util.warn(f"{c('bw')}{header}\n{c('xdw')}{'-'*len(header)}{c('x')}\n")
     print(std_out)
 
 def print_snippets(clips: list[dict[str,str]], filepath: str):

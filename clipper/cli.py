@@ -1,5 +1,5 @@
 from . import clipper, search
-from .config import CONFIG, OPTIONS, CONFIG_FILE
+from .config import CONFIG, OPTIONS, CONFIG_FILE, Format
 from typing import Optional
 import argparse
 import importlib
@@ -77,7 +77,7 @@ def get_cli_args(argv: Optional[list] = None) -> argparse.Namespace:
         "-o",
         "--output",
         help="Output format",
-        choices=["json", "raw"],
+        choices=[f.name for f in Format],
         default=CONFIG.output,
     )
     parser.add_argument("-s", "--source", help="Folder to search.")

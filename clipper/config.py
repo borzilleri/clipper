@@ -1,6 +1,7 @@
-from typing import Optional
-from pathlib import Path
 from argparse import Namespace
+from enum import Enum
+from pathlib import Path
+from typing import Optional
 import yaml
 
 CONFIG_DIR = Path("~/.config/snibbets").expanduser().absolute()
@@ -8,6 +9,7 @@ CONFIG_FILE = CONFIG_DIR / "snibbets.yml"
 
 DEFAULT_SOURCE_PATH = "~/Dropbox/Snippets"
 
+Format = Enum("Format", ["raw", "json", "alfred"])
 
 class Options:
     save_config: bool = False
@@ -45,6 +47,8 @@ class Configuration:
     interactive: bool = True
     menus: Optional[str] = None
 
+    format: Format = Format[output]
+
     def __init__(self) -> None:
         pass
 
@@ -70,6 +74,8 @@ class Configuration:
         self.editor = data.get("editor", self.editor)
         self.interactive = data.get("interactive", self.interactive)
         self.menus = data.get("menus", self.menus)
+
+        self.format = Format[self.output]
 
     def to_dict(self) -> dict:
         return {
@@ -100,14 +106,19 @@ class Configuration:
             self.name_only = args.name_only
         if args.output is not None:
             self.output = args.output.lower()
+            self.format = Format[self.output]
         if args.source is not None:
             self.source = Path(args.source).expanduser().absolute()
         if args.blockquotes is not None:
             self.include_blockquotes = args.blockquotes
         if args.highlight is not None:
             self.highlight = args.highlight
-
+        
         if args.quiet:
+            self.interactive = False
+        
+        if self.format == Format.alfred:
+            self.all = True
             self.interactive = False
 
     def read_config(self) -> None:

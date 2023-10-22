@@ -1,9 +1,8 @@
-from . import util, snippet, highlighter, menus, languages
+from . import util, snippet, menus, languages, printer
 from .config import CONFIG, OPTIONS
 from .util import warn
 from pathlib import Path
 from typing import Optional, List
-import json
 import regex as re
 import signal
 import sys
@@ -14,31 +13,20 @@ def open_file_in_editor(filepath: str, config_editor: Optional[str]):
     util.open_file(filepath, editor)
 
 
-def select_snippet(snippets: list, filepath, query):
+def select_snippet(snippets: list, filepath, query) -> list[dict[str,str]]:
     selection = menus.menu(
         snippets + [{"title": "All snippets"}], "Select snippet", filepath, query
     )
     if not selection:
-        return
-
+        return []
     if selection["title"] == "All snippets":
-        if CONFIG.output == "json":
-            print_snippet(json.dumps(snippets), filepath)
-        else:
-            if sys.stdout.isatty():
-                header = Path(filepath).stem
-                warn(f"{header}\n{'='*len(header)}\n")
-            print_all(snippets, filepath)
-    elif CONFIG.output == "json":
-        print_snippet(json.dumps(selection), filepath)
+        return snippets
     else:
-        if sys.stdout.isatty():
-            header = f"{Path(filepath).stem}: {selection['title']}"
-            warn(f"{header}\n{'-'*len(header)}\n")
-        print_snippet(selection["code"], filepath, selection["lang"])
+        return [selection]
 
 
 def handle_results(results: List[dict], query: str):
+    # Select our file from the search results.
     if len(results) == 0:
         if CONFIG.interactive:
             warn("No results")
@@ -51,58 +39,26 @@ def handle_results(results: List[dict], query: str):
             return
         filepath = answer["path"]
 
+    # Open up the editor if necessary,
+    # that's all we'll do this time.
     if OPTIONS.edit_snippet:
         open_file_in_editor(filepath, CONFIG.editor)
         return
 
+    # Now that we have our snippet file,
+    # read the contents and parse the snippets.
     with open(filepath) as f:
         lines = f.read().splitlines()
-
     snippets = snippet.parse_file(lines, CONFIG.all_notes, CONFIG.include_blockquotes)
+    
+    if len(snippets) > 1 and not CONFIG.all and CONFIG.interactive:
+            snippets = select_snippet(snippets, filepath, query)
+    
     if len(snippets) == 0:
         if CONFIG.interactive:
             warn("No snippets found")
         return
-    elif len(snippets) == 1 or not CONFIG.interactive:
-        if CONFIG.output == "json":
-            print(json.dumps(snippets), filepath)
-        else:
-            for s in snippets:
-                if sys.stdout.isatty():
-                    header = Path(filepath).stem
-                    print(f"{header}\n{'-'*len(header)}\n")
-                print_snippet(s["code"], filepath, s["lang"])
-    else:
-        if CONFIG.all:
-            print_all(snippets, filepath)
-        else:
-            select_snippet(snippets, filepath, query)
-
-
-def print_snippet(output: str, filepath: str, lang: str = ""):
-    if CONFIG.copy:
-        util.copy(output if CONFIG.all_notes else snippet.clean_code(output))
-        warn("Copied to clipboard")
-    # Only highlight if we're attached to a tty and using raw output,.
-    if CONFIG.highlight and CONFIG.output == "raw" and sys.stdout.isatty():
-        output = highlighter.highlight(output, filepath, lang, CONFIG.highlight_theme)
-    if CONFIG.all_notes:
-        print(output)
-    else:
-        print(snippet.clean_code(output))
-
-
-def print_all(snippets: list[dict], filepath):
-    if CONFIG.output == "json":
-        print_snippet(json.dumps(snippets), filepath)
-    else:
-        newline_prefix = ""
-        for s in snippets:
-            print(f"{newline_prefix}### {s['title']} ###")
-            print("")
-            print_snippet(s["code"], filepath, s["lang"])
-            newline_prefix = "\n"
-
+    printer.print_snippets(snippets, filepath)
 
 def new_snippet_from_clipboard():
     if not sys.stdout.isatty():

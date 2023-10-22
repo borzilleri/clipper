@@ -71,14 +71,14 @@ def restore_code(part: str, blocks: Dict[str, str]) -> Dict[str, str]:
     # if this part has any blocks in it
     # OR has any notes in it (because all_notes=True),
     # Then, build a dict with the title, lang, and text
-    snippet = {"title": "Default snippet", "lang": "", "code": ""}
+    snippet = {"title": "Default snippet", "code": "", "language": None}
     # Does this part have any code block tags in it?
     block_tags = BLOCK_RE.findall(part)
 
     if block_tags or has_notes(part):
         # Extract the title from the first line
         # Grab the first line, check to see if it's a block tag
-        title_m = re.search(r"\A(.+)\n", part)
+        title_m = re.search(r"\A(.+)\n+", part)
         if title_m and not BLOCK_RE.search(title_m.group(0)):
             # if not, extract it as the title.
             snippet["title"] = re.sub(r"[.:]$", "", title_m.group(0).strip())
@@ -86,15 +86,15 @@ def restore_code(part: str, blocks: Dict[str, str]) -> Dict[str, str]:
         for tag in block_tags:
             this_lang, this_code = parse_lang_marker(strip_empty_lines(blocks[tag]))
             # Set our overall snippet language to the first one we find.
-            if not snippet["lang"] and this_lang:
-                snippet["lang"] = this_lang
-            part = part.replace(f"<{tag}>", f"```{this_lang}\n{this_code}\n```")
-        snippet["code"] = part
+            if not snippet["language"] and this_lang:
+                snippet["language"] = this_lang
+            part = part.replace(f"<{tag}>", f"```{this_lang or ''}\n{this_code}\n```")
+        snippet["code"] = part.strip()
     return snippet
 
 
 def parse_lang_marker(block: str):
-    lang = ""
+    lang = None
     code = block
     m = re.search(r"<lang:(.*?)>", block)
     if m:

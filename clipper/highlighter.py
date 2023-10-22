@@ -30,7 +30,6 @@ def highlight_pygments(text: str, syntax: Optional[str], theme: str) -> str:
 def highlight_fences(text: str, filename: str, lang: str, theme: Optional[str] = None):
     fences = get_fences(text)
     for f in fences:
-        # escape regex f[code]?
         syntax = languages.normalize_syntax(f["lang"] or lang)
         highlighted_text = highlight(f["code"], filename, syntax).strip()
         text = text.replace(f["code"], highlighted_text)

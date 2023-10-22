@@ -12,7 +12,7 @@ For further documentation, reference the snibbets docs (at least until I get aro
 These are features that `snibbets` has that I have not yet implemented, or 
 additional features I'd like to add. They're _very_ roughly in priority order.
 
-* Alfred support
+* Alfred support (in progress, mostly sorta works with workflow in repo)
 * console colors for terminal output
 * better handling of output redirection
 * `gum` menus

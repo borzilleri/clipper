@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Optional
 import yaml
 
+# To maintain compatibility with the original `snibbets` tool,
+# we use the same config file.
 CONFIG_DIR = Path("~/.config/snibbets").expanduser().absolute()
 CONFIG_FILE = CONFIG_DIR / "snibbets.yml"
 
@@ -37,15 +39,15 @@ class Configuration:
     highlight: bool = False
     include_blockquotes: bool = False
     name_only: bool = False
-    output: str = "raw"
+    output: str = Format.raw.name
     source: Path = Path(DEFAULT_SOURCE_PATH).expanduser().absolute()
 
     extension: str = "md"
     highlighter: Optional[str] = None
-    highlight_theme: Optional[str] = None
-    editor: Optional[str] = None
+    highlight_theme: Optional[str] = "monokai"
+    editor: Optional[str] = "TextEdit"
     interactive: bool = True
-    menus: Optional[str] = None
+    menus: Optional[str] = "console"
 
     format: Format = Format[output]
 

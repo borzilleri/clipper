@@ -24,12 +24,12 @@ def __print_json(clips: list[dict[str,str]]):
 def __print_alfred_snippets(clips: list[dict[str,str]], filepath):
     items = []
     for s in clips:
-        uid = hashlib.sha256(s["title"].encode())
+        uid = hashlib.sha256(s["title"].encode()).hexdigest()
         items.append({
             "uid": uid,
             "title": s['title'],
-            "subtitle": s['lang'],
-            "arg": snippet.clean_code(s['code']) if CONFIG.all_notes else s['code'],
+            "subtitle": s['language'],
+            "arg": s['code'] if CONFIG.all_notes else snippet.clean_code(s['code']),
             "autocomplete": s['title'],
             "quicklookurl": filepath
         })

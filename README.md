@@ -12,32 +12,43 @@ For further documentation, reference the snibbets docs (at least until I get aro
 These are features that `snibbets` has that I have not yet implemented, or 
 additional features I'd like to add. They're _very_ roughly in priority order.
 
-* Alfred support (in progress, mostly sorta works with workflow in repo)
-* console colors for terminal output
-* better handling of output redirection
+* Alfred support: IN PROGRESS
+
+  Currently _mostly_ works, using included [workflow](./Clipper.alfredworkflow). Currently very experimental.
+
+* Improved Output Redirection
+
+  Better checking that our output is a tty when prompting for menus.
+
 * `gum` menus
 * `fzf` menus
-* `skylighting` highlighting
-* Launchbar support (very low priority as I don't use Launchbar)
+* `skylighting` highlighter support
+
+  Low priority. `pygments` is built in and works pretty well.
+
+* LaunchBar support
+  
+  Low priority. I don't use LaunchBar myself, so I'm not as inclined to get this to work.
 
 ## Differences from `snibbets`
 
+* `copy` behavior
+
+  When multiple snippets are printed (by specifying `--all` or selecting `All Snippets` from the menu), the entire output will be copied, not just the last snippet's code.
+
 * pygments highlighting
 
-Pygments is available as a python module, and as such is bundled with clipper. 
-This means there's no need to install it separately, and it's always available as
-the default highlighter.
+  Pygments is available as a python module, and as such is bundled with clipper. 
+  This means there's no need to install it separately, and it's always available as
+  the default highlighter.
 
 * console menu
 
-The default ("console") menu is powered by the [pick](https://github.com/wong2/pick) library.
+  The default ("console") menu is powered by the [pick](https://github.com/wong2/pick) library.
 
 * Minor formatting differences
 
-I have attempted to maintain compatability for the config file, command-line
-options, and snippet files. However, the code is not _exactly_ the same, and I 
-have made some opinionated choices around format and whitespace. The result is 
-that the output format may differ slightly.
+  I have attempted to maintain compatability for the config file, command-line options, and snippet files. However, the code is not _exactly_ the same, and I have made some opinionated choices around format and whitespace. The result is that the output format may differ slightly.
 
 ## Ok, but why did I make this?
 

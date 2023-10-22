@@ -2,3 +2,4 @@ env/
 dist/
 *.egg-info/
 clipper/_version.py
+test_clips/

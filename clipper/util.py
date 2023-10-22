@@ -8,19 +8,22 @@ import shutil
 import subprocess
 import sys
 
-MACOS_APP_DIRS = ["/Applications", "/Applications/Setapp", "~/Applications"]
+MACOS_APP_DIRS = [
+    "/System/Applications",
+    "/Applications",
+    "/Applications/Setapp",
+    "~/Applications",
+]
 EDITORS = ["code", "subl", "nano", "vim"]
 
 
 def get_app_path(cmd: str) -> Optional[str]:
-    app = Path(re.sub(r"(\\.app)?$", ".app", cmd)).expanduser().absolute()
-    command = (
-        cmd if Path(cmd).expanduser().absolute() == cmd else re.sub(r"\\.app$", "", cmd)
-    )
+    app = Path(re.sub(r"(\\.app)?$", ".app", cmd)).expanduser()
+    command = cmd if Path(cmd).expanduser() == cmd else re.sub(r"\\.app$", "", cmd)
     if app.exists():
         return command
-    for dir in MACOS_APP_DIRS:
-        if (Path(dir) / app).exists():
+    for d in MACOS_APP_DIRS:
+        if (Path(d) / app).exists():
             return command
     return None
 
@@ -30,7 +33,7 @@ def is_bundle(cmd: str) -> bool:
 
 
 def darwin_cmd(path: str, app: Optional[str]):
-    if app is None:
+    if not app:
         return ["open", path]
     elif is_bundle(app):
         return ["open", "-b", app, path]
@@ -116,10 +119,14 @@ def is_fenced(s: str) -> bool:
     count = len(re.findall(r"^```", s, flags=re.M))
     return count > 1 and (count % 2) == 0
 
+
 def get_fences(text: str):
     if not is_fenced(text):
         return []
-    p = re.compile(r"^(?:`{3,})(?P<lang> *\S+)? *\n(?P<code>[\s\S]*?)\n(?:`{3,}) *(?=\n|\Z)", flags=re.M | re.I)
+    p = re.compile(
+        r"^(?:`{3,})(?P<lang> *\S+)? *\n(?P<code>[\s\S]*?)\n(?:`{3,}) *(?=\n|\Z)",
+        flags=re.M | re.I,
+    )
     fences = []
     for m in p.finditer(text):
         fences.append(m.groupdict())

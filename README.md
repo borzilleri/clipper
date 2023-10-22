@@ -10,13 +10,15 @@ For further documentation, reference the snibbets docs (at least until I get aro
 ## Todo List
 
 These are features that `snibbets` has that I have not yet implemented, or 
-additional features I'd like to add.
+additional features I'd like to add. They're _very_ roughly in priority order.
 
+* Alfred support
+* console colors for terminal output
+* better handling of output redirection
 * `gum` menus
 * `fzf` menus
 * `skylighting` highlighting
-* Launchbar support
-* Alfred support
+* Launchbar support (very low priority as I don't use Launchbar)
 
 ## Differences from `snibbets`
 
@@ -32,9 +34,10 @@ The default ("console") menu is powered by the [pick](https://github.com/wong2/p
 
 * Minor formatting differences
 
-I have attempted to maintain compatability for the config file, command-line options, 
-and snippet files. However, the code is not _exactly_ the same, and I have made some 
-opinionated choices around format and whitespace.
+I have attempted to maintain compatability for the config file, command-line
+options, and snippet files. However, the code is not _exactly_ the same, and I 
+have made some opinionated choices around format and whitespace. The result is 
+that the output format may differ slightly.
 
 ## Ok, but why did I make this?
 

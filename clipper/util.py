@@ -108,7 +108,8 @@ def strip_empty_lines(val: str):
 
 
 def warn(s: str):
-    print(s, file=sys.stderr)
+    if sys.stderr.isatty():
+        print(s, file=sys.stderr)
 
 
 def is_fenced(s: str) -> bool:

@@ -1,19 +1,29 @@
-from . import clipper, search
+from . import clipper
 from .config import CONFIG, OPTIONS, CONFIG_FILE, Format
 from .colors import c, init_colors
+from .util import warn
 from typing import Optional
 import argparse
 import importlib
 import sys
 
+
 def get_version():
+    """
+    Returns the version of the app from version.py
+    """
     try:
         version = importlib.import_module("clipper._version")
         return version.version or "0.0.0"
     except ModuleNotFoundError:
         return "0.0.0"
 
-def get_cli_args(argv: Optional[list] = None) -> argparse.Namespace:
+
+def __init_args(argv: Optional[list] = None) -> str:
+    """
+    Sets up an argument parser, parses argv, and initializes OPTIONS and CONFIG\n
+    Returns the query string passed in.
+    """
     parser = argparse.ArgumentParser()
 
     # Actions
@@ -98,46 +108,67 @@ def get_cli_args(argv: Optional[list] = None) -> argparse.Namespace:
 
     # The search query
     parser.add_argument("query", nargs="*")
-    return parser.parse_args(argv)
 
-
-def main(argv: Optional[list] = None):
-    CONFIG.read_config()
-    args = get_cli_args(argv)
+    args = parser.parse_args(argv)
     CONFIG.update_from_args(args)
     OPTIONS.parse_args(args)
+    return " ".join(args.query)
+
+
+def main(argv: Optional[list] = None) -> Optional[int]:
+    """
+    Main entry point for CLI, argv should be sys.argv. Returns None on success,
+    1 if there was a failure.
+    """
+    CONFIG.read_config()
+    query = __init_args(argv)
     init_colors()
 
     if OPTIONS.save_config:
         CONFIG.write_config()
-        # green / white
         print(f"{c('bg')}Configuration saved to {c('w')}{CONFIG_FILE}")
 
     if OPTIONS.edit_config:
         CONFIG.write_config()
-        clipper.open_file_in_editor(str(CONFIG_FILE), CONFIG.editor)
-        sys.exit()
+        clipper.open_file_in_editor(CONFIG_FILE, CONFIG.editor)
+        return
 
     if not CONFIG.source.is_dir():
         print(f"{c('br')}The Snippets folder doesn't exist, please configure it.")
-        print(f"{c('bg')}Run `{c('bw')}snibbets --configure{c('bg')}` to open the config file for editing")
-        sys.exit()
+        print(
+            f"{c('bg')}Run `{c('bw')}snibbets --configure{c('bg')}` to open the config file for editing"
+        )
+        return
 
     if OPTIONS.paste_snippet:
-        clipper.new_snippet_from_clipboard()
-        sys.exit()
+        clipper.new_snippet_from_clipboard(OPTIONS.edit_snippet)
+        return
 
-    query = " ".join(args.query)
-    if query is None or len(query) == 0:
+    if not query:
         if OPTIONS.save_config:
-            sys.exit()
+            return
         print(f"{c('br')}No search query.")
         sys.exit(1)
 
-    result = search.search(query, CONFIG.source, CONFIG.extension, CONFIG.name_only)
-    if result is not None:
-        clipper.handle_results(search.parse_results(result), query)
+    files = clipper.find_files(query)
+    if not files:
+        if CONFIG.interactive:
+            warn(f"{c('br')}No results")
+        return
+
+    snippet_file = clipper.select_file(files)
+
+    if OPTIONS.edit_snippet:
+        clipper.open_file_in_editor(snippet_file, CONFIG.editor)
+        return
+
+    snippets = clipper.load_snippets(snippet_file)
+    if not snippets:
+        warn(f"{c('br')}No snippets found.")
+        return
+    clipper.select_snippet(snippets, snippet_file, query)
 
 
 if __name__ == "__main__":
-    main()
+    retval = main()
+    sys.exit(retval)

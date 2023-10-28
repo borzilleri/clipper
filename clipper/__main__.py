@@ -1,3 +1,5 @@
 from .cli import main
+import sys
 
-main()
+retval = main()
+sys.exit(retval)

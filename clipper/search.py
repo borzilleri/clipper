@@ -1,4 +1,5 @@
 from .colors import c
+from .util import warn
 from pathlib import Path
 from typing import Optional, List, Dict
 import regex as re
@@ -7,15 +8,15 @@ import shutil
 import subprocess
 
 
-def do_cmd(cmd: Optional[str]) -> Optional[List[str]]:
+def __do_cmd(cmd: Optional[str]) -> List[str]:
     if cmd:
         out = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         if out.stdout and len(out.stdout) > 0:
             return out.stdout.strip().split("\n")
-    return None
+    return []
 
 
-def grep_cmd(query: str, ext: str, folder: str):
+def __grep_cmd(query: str, ext: str, folder: str):
     # Use grep, or grep equivalent
     rg = shutil.which("rg")
     ag = shutil.which("ag")
@@ -32,7 +33,7 @@ def grep_cmd(query: str, ext: str, folder: str):
     return None
 
 
-def mdfind_cmd(query: str, folder: str, ext: str, name_only: bool) -> Optional[str]:
+def __mdfind_cmd(query: str, folder: str, ext: str, name_only: bool) -> Optional[str]:
     mdfind = shutil.which("mdfind")
     if mdfind:
         name_only_opt = "-name " if name_only else ""
@@ -40,11 +41,11 @@ def mdfind_cmd(query: str, folder: str, ext: str, name_only: bool) -> Optional[s
     return None
 
 
-def find_cmd(query: str, folder: str, ext: str) -> Optional[str]:
+def __find_cmd(query: str, folder: str, ext: str) -> Optional[str]:
     return f"find {folder} -regex '{folder}/{query}' -name '*.{ext}'"
 
 
-def search(query: str, source_dir: Path, ext: str, name_only: bool) -> Optional[list]:
+def search(query: str, source_dir: Path, ext: str, name_only: bool) -> list[str]:
     """
     Use multiple methods to search for snippet files and return a list of filepaths.\n
     This will use `mdfind` if available, then `find`, and finally `grep` (and
@@ -55,28 +56,28 @@ def search(query: str, source_dir: Path, ext: str, name_only: bool) -> Optional[
     query_re = f".*{query_re}.*"
     folder = shlex.quote(str(source_dir))
 
-    result = do_cmd(mdfind_cmd(query, folder, ext, name_only))
+    result = __do_cmd(__mdfind_cmd(query, folder, ext, name_only))
     if result:
         return result
 
-    result = do_cmd(find_cmd(query, folder, ext))
+    result = __do_cmd(__find_cmd(query, folder, ext))
     if result:
         return result
 
     # If we're configured for name_only,
     # don't try grep and just bail here.
     if name_only:
-        print(f"{c('br')}No name matches found.")
-        return None
+        warn(f"{c('br')}No name matches found.")
+        return []
 
-    cmd = grep_cmd(query, folder, ext)
+    cmd = __grep_cmd(query, folder, ext)
     # if we didn't find a grep command, print a message and bail.
     if not cmd:
-        print(
+        warn(
             f"{c('br')}No search method available on this system. Please install ripgrep, silver surfer, ack, or grep."
         )
-        return None
-    return do_cmd(cmd)
+        return []
+    return __do_cmd(cmd)
 
 
 def parse_results(files: List[str]) -> List[Dict[str, str]]:

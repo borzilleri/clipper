@@ -7,6 +7,12 @@ This is, for the most part, api compatible with `snibbets`. The config file is t
 
 For further documentation, reference the snibbets docs (at least until I get around to adding them here).
 
+## Install
+
+Currently only installation from git is supported:
+
+    python -m pip install git+https://github.com/borzilleri/clipper.git
+
 ## Todo List
 
 These are features that `snibbets` has that I have not yet implemented, or 

@@ -19,21 +19,18 @@ class Options:
     edit_config: bool = False
     edit_snippet: bool = False
     paste_snippet: bool = False
-    snippet_file = None
 
     def __init__(self) -> None:
         self.save_config = self.save_config
         self.edit_config = self.edit_config
         self.edit_snippet = self.edit_snippet
         self.paste_snippet = self.paste_snippet
-        self.snippet_file = self.snippet_file
 
     def parse_args(self, args: Namespace) -> None:
         self.save_config = args.save
         self.edit_config = args.configure
         self.edit_snippet = args.edit
         self.paste_snippet = args.paste
-        self.snippet_file = args.file
 
 
 class Configuration:

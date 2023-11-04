@@ -3,7 +3,7 @@
 A tool for accessing code snippets contained in a folder of plain text Markdown files.
 This is a python reimplementation of [snibbets](https://github.com/ttscoff/snibbets)
 
-This is, for the most part, api compatible with `snibbets`. The config file is the same format, the command line arguments are the same (mostly, see below).
+This is, for the most part, api compatible with `snibbets`. The config file is the same format, the command line arguments are identical. There are minor differences, documented below.
 
 For further documentation, reference the snibbets docs (at least until I get around to adding them here).
 
@@ -26,8 +26,13 @@ additional features I'd like to add. They're _very_ roughly in priority order.
 
   Better checking that our output is a tty when prompting for menus.
 
-* `gum` menus
-* `fzf` menus
+* Documentation
+
+  Properly document options, usage, installation, etc, here instead of relying
+  relying on the snibbets docs.
+
+* Release to PyPi
+
 * `skylighting` highlighter support
 
   Low priority. `pygments` is built in and works pretty well.

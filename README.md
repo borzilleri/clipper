@@ -1,4 +1,5 @@
 # Clipper
+<img src="docs/sailboat.png">
 
 A tool for accessing code snippets contained in a folder of plain text Markdown files.
 This is a python reimplementation of [snibbets](https://github.com/ttscoff/snibbets)
@@ -18,9 +19,11 @@ Currently only installation from git is supported:
 These are features that `snibbets` has that I have not yet implemented, or 
 additional features I'd like to add. They're _very_ roughly in priority order.
 
-* Alfred support: IN PROGRESS
+* Alfred support: IN PROGRESS/Mostly done.
 
-  Currently _mostly_ works, using included [workflow](./Clipper.alfredworkflow). Currently very experimental.
+  This should be nearly functionally complete and usable. Remaining tasks are
+  improved documentation in the configuration window, and removing "nulls"
+  from some of the displayed fields.
 
 * Improved Output Redirection
 
@@ -67,3 +70,8 @@ Honestly? No good reason. Stretching some codeing muscles, learning more about
 building and publishing python packages.
 
 Also, I just don't care for ruby and didnt feel like installing it.
+
+
+## Credits & Attribution
+
+<a href="https://www.flaticon.com/free-icons/ship" title="ship icons">Ship icon created by Ahmad Yafie - Flaticon</a>
